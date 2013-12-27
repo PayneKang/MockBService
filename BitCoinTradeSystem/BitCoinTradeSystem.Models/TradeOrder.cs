@@ -5,6 +5,10 @@ using System.Web;
 
 namespace BitCoinTradeSystem.Models
 {
+    public class TradeOrderResponse {
+        public string IdentifyID { get; set; }
+        public List<TradeOrder> Orders { get; set; }
+    }
     public partial class TradeOrder
     {
         public string TradeType { get; set; }
@@ -16,5 +20,6 @@ namespace BitCoinTradeSystem.Models
         public string BuyID { get; set; }
         public float SellRequestPrice { get; set; }
         public float BuyRequestPrice { get; set; }
+        public DateTime DealTime { get; set; }
     }
 }

@@ -41,8 +41,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Consts.cs" />
+    <Compile Include="KLineEngineer.cs" />
+    <Compile Include="KLineType.cs" />
     <Compile Include="TradeEngineer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UrlReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BitCoinTradeSystem.Models\BitCoinTradeSystem.Models.csproj">

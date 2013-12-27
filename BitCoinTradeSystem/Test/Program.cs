@@ -5,6 +5,7 @@ using System.Text;
 using BitCoinTradeFuncLib;
 using System.Diagnostics;
 using System.Web.Script.Serialization;
+using BitCoinTradeSystem.Models;
 
 namespace Test
 {
@@ -13,13 +14,16 @@ namespace Test
         static void Main(string[] args)
         {
             TradeEngineer eng = new TradeEngineer();
-            string result = eng.ReadUrl(TradeEngineer.GET_HIGHESTBUY_INTERFACE);
-            string result2 = eng.ReadUrl(TradeEngineer.GET_LOWESTSELL_INTERFACE);
-            List<BitCoinTradeSystem.Models.TradeOrder> orders = eng.Calculate();
+            long i = 0;
+            while (true)
+            {
+                i++;
+                TradeOrderResponse orders = eng.Calculate(i.ToString().PadLeft(10,' '));
 
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            string jsonoutput = serializer.Serialize(orders);
-            Debug.WriteLine(jsonoutput);
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                string jsonoutput = serializer.Serialize(orders);
+                Debug.WriteLine(jsonoutput);
+            }
         }
     }
 }

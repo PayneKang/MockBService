@@ -14,50 +14,35 @@ namespace BitCoinTradeFuncLib
     {
         private static object tradeLock = new object();
 
-        public const string GET_HIGHESTBUY_INTERFACE = "http://localhost:50580/TradeData/GetHighestBuyRequest";
-        public const string GET_LOWESTSELL_INTERFACE = "http://localhost:50580/TradeData/GetLowestSellRequest";
+        public const string GET_HIGHESTBUY_INTERFACE = "http://localhost:50580/TradeData/GetHighestBuyRequest?identifyID={0}";
+        public const string GET_LOWESTSELL_INTERFACE = "http://localhost:50580/TradeData/GetLowestSellRequest?identifyID={0}";
 
-        public static Encoding ENCODING = Encoding.UTF8;
-        public const int BUFFER_SIZE = 1024;
 
-        public string ReadUrl(string url)
+        public string ReadUrl(string url,string identifyID)
         {
-            HttpWebRequest httpReq = (HttpWebRequest)WebRequest.Create(url);
-            HttpWebResponse httpResp = (HttpWebResponse)httpReq.GetResponse();
-            Stream stream = httpResp.GetResponseStream();
-
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int read = stream.Read(buffer, 0, BUFFER_SIZE);
-            StringBuilder sb = new StringBuilder();
-            while (read > 0)
-            {
-                sb.Append(ENCODING.GetString(buffer, 0, read));
-                read = stream.Read(buffer, 0, BUFFER_SIZE);
-            }
-            stream.Close();
-            return sb.ToString();
+            return UrlReader.GetJsonResponse<string>(string.Format(url, identifyID));
         }
 
-        public TradeRequestItem GetHighestBuy()
+        public TradeRequestItem GetHighestBuy(string identifyID)
         {
             JavaScriptSerializer serializer = new JavaScriptSerializer();
-            TradeRequestItem req = serializer.Deserialize<TradeRequestItem>(ReadUrl(GET_HIGHESTBUY_INTERFACE));
+            TradeRequestItem req = serializer.Deserialize<TradeRequestItem>(ReadUrl(GET_HIGHESTBUY_INTERFACE, identifyID));
             return req;
         }
 
-        public TradeRequestItem GetLowestSell()
+        public TradeRequestItem GetLowestSell(string identifyID)
         {
             JavaScriptSerializer serializer = new JavaScriptSerializer();
-            TradeRequestItem req = serializer.Deserialize<TradeRequestItem>(ReadUrl(GET_LOWESTSELL_INTERFACE));
+            TradeRequestItem req = serializer.Deserialize<TradeRequestItem>(ReadUrl(GET_LOWESTSELL_INTERFACE,identifyID));
             return req;
         }
         
-        public List<TradeOrder> Calculate()
+        public TradeOrderResponse Calculate(string identifyID)
         {
             lock (tradeLock)
             {
-                TradeRequestItem buy = GetHighestBuy();
-                TradeRequestItem sell = GetLowestSell();
+                TradeRequestItem buy = GetHighestBuy(identifyID);
+                TradeRequestItem sell = GetLowestSell(identifyID);
                 if (buy.Price < sell.Price)
                     return null;
                 List<TradeOrder> buyOrders = new List<TradeOrder>();
@@ -86,15 +71,15 @@ namespace BitCoinTradeFuncLib
                         sellorder.DealQuantity = dealQuantity;
                         sellorder.SellID = sell.TradeRequestID;
                         sellorder.SellRequestPrice = sell.Price;
-                        sellorder.TradeType = "sell";
+                        sellorder.TradeType = Consts.SELL_CODE;
                         sellOrders.Add(sellorder);
                         sellReqs.Add(sell);
-                        sell = GetLowestSell();
+                        sell = GetLowestSell(identifyID);
                     }
                     buyorder.BuyID = buy.TradeRequestID;
                     buyorder.BuyRequestPrice = buy.Price;
                     buyorder.DealQuantity = totalQuantity;
-                    buyorder.TradeType = "buy";
+                    buyorder.TradeType = Consts.BUY_CODE;
                     
                     buyOrders.Add(buyorder);
                 }
@@ -119,21 +104,25 @@ namespace BitCoinTradeFuncLib
                         buyorder.DealQuantity = dealQuantity;
                         buyorder.SellID = sell.TradeRequestID;
                         buyorder.SellRequestPrice = sell.Price;
-                        buyorder.TradeType = "buy";
+                        buyorder.TradeType = Consts.BUY_CODE;
                         buyOrders.Add(buyorder);
                         buyReqs.Add(buy);
-                        buy = GetHighestBuy();
+                        buy = GetHighestBuy(identifyID);
                     }
                     sellorder.SellID = sell.TradeRequestID;
                     sellorder.SellRequestPrice = sell.Price;
                     sellorder.DealQuantity = totalQuantity;
-                    sellorder.TradeType = "sell";                    
+                    sellorder.TradeType = Consts.SELL_CODE;                    
                     sellOrders.Add(sellorder);
                 }
                 List<TradeOrder> orders = new List<TradeOrder>();
                 orders.AddRange(sellOrders);
                 orders.AddRange(buyOrders);
-                return orders;
+                return new TradeOrderResponse()
+                {
+                    IdentifyID = identifyID,
+                    Orders = orders
+                };
             }
         }
     }
