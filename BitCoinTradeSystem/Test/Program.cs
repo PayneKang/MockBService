@@ -15,6 +15,20 @@ namespace Test
     {
         static void Main(string[] args)
         {
+            KLineEngineer eng = new KLineEngineer();
+            RandomProvider ran = new RandomProvider();
+            while (true)
+            {
+                string key = ran.GetRandomString(10);
+                Logger.Log("start kline engineer");
+                KLineResponse klines = eng.Calculate(key);
+                eng.SendKLines(klines);
+                System.Threading.Thread.Sleep(KLineEngineer.KLINE_INTERVAL);
+            }
+        }
+        static void TestTrade()
+        {
+
             TradeEngineer eng = new TradeEngineer();
             RandomProvider ran = new RandomProvider();
             while (true)
