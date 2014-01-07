@@ -25,8 +25,14 @@ namespace MockJsonServices.Controllers
         [HttpPost]
         public JsonResult TradeOrderCallbackHandles()
         {
-            string jsonData = Request.Form["TradeOrders"];
-            return Json("success");
+            string jsonData = Request.Form["JsonStr"];
+            TradeOrderCallback callback = new TradeOrderCallback()
+            {
+                success = true,
+                errormessage = "test message",
+                 IdentifyID = Request["IdentifyID"]
+            };
+            return Json(callback, JsonRequestBehavior.AllowGet);
         }
 
     }

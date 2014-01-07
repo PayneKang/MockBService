@@ -5,6 +5,11 @@ using System.Web;
 
 namespace BitCoinTradeSystem.Models
 {
+    public class TradeOrderCallback {
+        public bool success { get; set; }
+        public string IdentifyID { get; set; }
+        public string errormessage { get; set; }
+    }
     public class TradeOrderResponse {
         public string IdentifyID { get; set; }
         public List<TradeOrder> Orders { get; set; }

@@ -13,10 +13,14 @@ namespace BitCoinTradeService
         /// </summary>
         static void Main()
         {
+            StartService();
+        }
+        static void StartService()
+        {
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[] 
 			{ 
-				new Service1() 
+				new TradeOrderService() 
 			};
             ServiceBase.Run(ServicesToRun);
         }

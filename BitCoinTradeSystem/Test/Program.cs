@@ -6,6 +6,8 @@ using BitCoinTradeFuncLib;
 using System.Diagnostics;
 using System.Web.Script.Serialization;
 using BitCoinTradeSystem.Models;
+using CommonLib;
+using System.Reflection;
 
 namespace Test
 {
@@ -14,15 +16,14 @@ namespace Test
         static void Main(string[] args)
         {
             TradeEngineer eng = new TradeEngineer();
-            long i = 0;
+            RandomProvider ran = new RandomProvider();
             while (true)
             {
-                i++;
-                TradeOrderResponse orders = eng.Calculate(i.ToString().PadLeft(10,' '));
-
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
-                string jsonoutput = serializer.Serialize(orders);
-                Debug.WriteLine(jsonoutput);
+                string key = ran.GetRandomString(10);
+                Logger.Log("start engineer");
+                TradeOrderResponse orders = eng.Calculate(key);
+                eng.SendOrderToResponse(orders);
+                System.Threading.Thread.Sleep(TradeEngineer.ORDER_INTERVAL);
             }
         }
     }

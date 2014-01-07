@@ -7,6 +7,7 @@ using System.Threading;
 using System.Web.Script.Serialization;
 using System.Net;
 using System.IO;
+using System.Configuration;
 
 namespace BitCoinTradeFuncLib
 {
@@ -14,8 +15,18 @@ namespace BitCoinTradeFuncLib
     {
         private static object tradeLock = new object();
 
-        public const string GET_HIGHESTBUY_INTERFACE = "http://localhost:50580/TradeData/GetHighestBuyRequest?identifyID={0}";
-        public const string GET_LOWESTSELL_INTERFACE = "http://localhost:50580/TradeData/GetLowestSellRequest?identifyID={0}";
+        public static string GET_HIGHESTBUY_INTERFACE { get; private set; }
+        public static string GET_LOWESTSELL_INTERFACE { get; private set; }
+        public static string CALLBACK_INTERFACE { get; private set; }
+        public static int ORDER_INTERVAL { get; private set; }
+
+        static TradeEngineer()
+        {
+            GET_HIGHESTBUY_INTERFACE = ConfigurationManager.AppSettings["GetHighestBuy"];
+            GET_LOWESTSELL_INTERFACE = ConfigurationManager.AppSettings["GetLowestSell"];
+            CALLBACK_INTERFACE = ConfigurationManager.AppSettings["Callback"];
+            ORDER_INTERVAL = int.Parse(ConfigurationManager.AppSettings["OrderInterval"]);
+        }
 
 
         public string ReadUrl(string url,string identifyID)
@@ -26,14 +37,20 @@ namespace BitCoinTradeFuncLib
         public TradeRequestItem GetHighestBuy(string identifyID)
         {
             JavaScriptSerializer serializer = new JavaScriptSerializer();
-            TradeRequestItem req = serializer.Deserialize<TradeRequestItem>(ReadUrl(GET_HIGHESTBUY_INTERFACE, identifyID));
+            ParameterValue[] paras = new ParameterValue[] { 
+                new ParameterValue(){ Name="identifyID", Value=identifyID}
+            };
+            TradeRequestItem req = UrlReader.GetJsonResponse<TradeRequestItem>(GET_HIGHESTBUY_INTERFACE, SendType.Get, paras);
             return req;
         }
 
         public TradeRequestItem GetLowestSell(string identifyID)
         {
             JavaScriptSerializer serializer = new JavaScriptSerializer();
-            TradeRequestItem req = serializer.Deserialize<TradeRequestItem>(ReadUrl(GET_LOWESTSELL_INTERFACE,identifyID));
+            ParameterValue[] paras = new ParameterValue[] { 
+                new ParameterValue(){ Name="identifyID", Value=identifyID}
+            };
+            TradeRequestItem req = UrlReader.GetJsonResponse<TradeRequestItem>(GET_LOWESTSELL_INTERFACE, SendType.Get, paras);
             return req;
         }
         
@@ -124,6 +141,17 @@ namespace BitCoinTradeFuncLib
                     Orders = orders
                 };
             }
+        }
+
+        public TradeOrderCallback SendOrderToResponse(TradeOrderResponse orderresponse)
+        {
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            ParameterValue[] paras = new ParameterValue[] { 
+                new ParameterValue(){ Name="identifyID", Value=orderresponse.IdentifyID},
+                new ParameterValue(){Name="jsonStr",Value = serializer.Serialize(orderresponse.Orders)}
+            };
+            TradeOrderCallback result = UrlReader.GetJsonResponse<TradeOrderCallback>(CALLBACK_INTERFACE,SendType.Post,paras);
+            return result;
         }
     }
 }
