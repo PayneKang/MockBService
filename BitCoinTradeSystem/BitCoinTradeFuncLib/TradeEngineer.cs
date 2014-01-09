@@ -50,8 +50,15 @@ namespace BitCoinTradeFuncLib
             ParameterValue[] paras = new ParameterValue[] { 
                 new ParameterValue(){ Name="identifyID", Value=identifyID}
             };
-            TradeRequestItem req = UrlReader.GetJsonResponse<TradeRequestItem>(GET_LOWESTSELL_INTERFACE, SendType.Get, paras);
-            return req;
+            try
+            {
+                TradeRequestItem req = UrlReader.GetJsonResponse<TradeRequestItem>(GET_LOWESTSELL_INTERFACE, SendType.Get, paras);
+                return req;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
         
         public TradeOrderResponse Calculate(string identifyID)
@@ -73,6 +80,8 @@ namespace BitCoinTradeFuncLib
                     float totalQuantity = 0f;
                     while (buy.Quantity > 0)
                     {
+                        if (sell == null)
+                            break;
                         if (buy.Price < sell.Price)
                             break;
                         // 创建卖单
@@ -107,6 +116,8 @@ namespace BitCoinTradeFuncLib
                     float totalQuantity = 0f;
                     while (sell.Quantity > 0)
                     {
+                        if (buy == null)
+                            break;
                         if (buy.Price < sell.Price)
                             break;
                         TradeOrder buyorder = new TradeOrder();

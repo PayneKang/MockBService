@@ -15,6 +15,11 @@ namespace Test
     {
         static void Main(string[] args)
         {
+            TestTrade();
+        }
+
+        static void TestKLine()
+        {
             KLineEngineer eng = new KLineEngineer();
             RandomProvider ran = new RandomProvider();
             while (true)
@@ -26,6 +31,7 @@ namespace Test
                 System.Threading.Thread.Sleep(KLineEngineer.KLINE_INTERVAL);
             }
         }
+
         static void TestTrade()
         {
 
