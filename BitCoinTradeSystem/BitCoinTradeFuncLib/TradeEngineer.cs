@@ -8,6 +8,7 @@ using System.Web.Script.Serialization;
 using System.Net;
 using System.IO;
 using System.Configuration;
+using System.Diagnostics;
 
 namespace BitCoinTradeFuncLib
 {
@@ -98,6 +99,7 @@ namespace BitCoinTradeFuncLib
                         sellorder.SellID = sell.TradeRequestID;
                         sellorder.SellRequestPrice = sell.Price;
                         sellorder.TradeType = Consts.SELL_CODE;
+                        sellorder.DealTime = DateTime.Now;
                         sellOrders.Add(sellorder);
                         sellReqs.Add(sell);
                         sell = GetLowestSell(identifyID);
@@ -106,7 +108,7 @@ namespace BitCoinTradeFuncLib
                     buyorder.BuyRequestPrice = buy.Price;
                     buyorder.DealQuantity = totalQuantity;
                     buyorder.TradeType = Consts.BUY_CODE;
-                    
+                    buyorder.DealTime = DateTime.Now;
                     buyOrders.Add(buyorder);
                 }
                 else
@@ -133,6 +135,7 @@ namespace BitCoinTradeFuncLib
                         buyorder.SellID = sell.TradeRequestID;
                         buyorder.SellRequestPrice = sell.Price;
                         buyorder.TradeType = Consts.BUY_CODE;
+                        buyorder.DealTime = DateTime.Now;
                         buyOrders.Add(buyorder);
                         buyReqs.Add(buy);
                         buy = GetHighestBuy(identifyID);
@@ -140,7 +143,8 @@ namespace BitCoinTradeFuncLib
                     sellorder.SellID = sell.TradeRequestID;
                     sellorder.SellRequestPrice = sell.Price;
                     sellorder.DealQuantity = totalQuantity;
-                    sellorder.TradeType = Consts.SELL_CODE;                    
+                    sellorder.TradeType = Consts.SELL_CODE;
+                    sellorder.DealTime = DateTime.Now;
                     sellOrders.Add(sellorder);
                 }
                 List<TradeOrder> orders = new List<TradeOrder>();
@@ -161,6 +165,7 @@ namespace BitCoinTradeFuncLib
                 new ParameterValue(){ Name="identifyID", Value=orderresponse.IdentifyID},
                 new ParameterValue(){Name="jsonStr",Value = serializer.Serialize(orderresponse.Orders)}
             };
+            Debug.Print(serializer.Serialize(orderresponse.Orders));
             TradeOrderCallback result = UrlReader.GetJsonResponse<TradeOrderCallback>(CALLBACK_INTERFACE,SendType.Post,paras);
             return result;
         }
