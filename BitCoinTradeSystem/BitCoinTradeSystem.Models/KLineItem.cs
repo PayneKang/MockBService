@@ -13,6 +13,6 @@ namespace BitCoinTradeSystem.Models
         public double Low { get; set; }
         public double Close { get; set; }
         public double Volume { get; set; }
-        public DateTime KLineTime { get; set; }
+        public string KLineTimeString { get; set; }
     }
 }

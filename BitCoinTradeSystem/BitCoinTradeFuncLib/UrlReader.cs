@@ -24,7 +24,7 @@ namespace BitCoinTradeFuncLib
     {
         public static Encoding ENCODING = Encoding.UTF8;
         public const int BUFFER_SIZE = 1024;
-        private static string ReadUrl(string url, SendType sendType = SendType.Get, string postData = "" )
+        public static string ReadUrl(string url, SendType sendType = SendType.Get, string postData = "" )
         {
             HttpWebRequest httpReq = null;
             if (sendType == SendType.Post)

@@ -25,6 +25,6 @@ namespace BitCoinTradeSystem.Models
         public string BuyID { get; set; }
         public float SellRequestPrice { get; set; }
         public float BuyRequestPrice { get; set; }
-        public DateTime DealTime { get; set; }
+        public string DealTime { get; set; }
     }
 }

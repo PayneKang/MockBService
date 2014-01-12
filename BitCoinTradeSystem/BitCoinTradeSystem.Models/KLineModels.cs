@@ -14,6 +14,8 @@ namespace BitCoinTradeSystem.Models
     public class KLineResponse
     {
         public string IdentifyID { get; set; }
+        public string StartTime { get; set; }
+        public string EndTime { get; set; }
         public List<KLineItem> KLines { get; set; }
     }
 }

@@ -9,6 +9,7 @@ using System.Net;
 using System.IO;
 using System.Configuration;
 using System.Diagnostics;
+using CommonLib;
 
 namespace BitCoinTradeFuncLib
 {
@@ -98,8 +99,8 @@ namespace BitCoinTradeFuncLib
                         sellorder.DealQuantity = dealQuantity;
                         sellorder.SellID = sell.TradeRequestID;
                         sellorder.SellRequestPrice = sell.Price;
-                        sellorder.TradeType = Consts.SELL_CODE;
-                        sellorder.DealTime = DateTime.Now;
+                        sellorder.TradeType = Constants.SELL_CODE;
+                        sellorder.DealTime = DateTime.Now.ToString(Constants.DATEFORMAT_NUMONLY);
                         sellOrders.Add(sellorder);
                         sellReqs.Add(sell);
                         sell = GetLowestSell(identifyID);
@@ -107,8 +108,8 @@ namespace BitCoinTradeFuncLib
                     buyorder.BuyID = buy.TradeRequestID;
                     buyorder.BuyRequestPrice = buy.Price;
                     buyorder.DealQuantity = totalQuantity;
-                    buyorder.TradeType = Consts.BUY_CODE;
-                    buyorder.DealTime = DateTime.Now;
+                    buyorder.TradeType = Constants.BUY_CODE;
+                    buyorder.DealTime = DateTime.Now.ToString(Constants.DATEFORMAT_NUMONLY);
                     buyOrders.Add(buyorder);
                 }
                 else
@@ -134,8 +135,8 @@ namespace BitCoinTradeFuncLib
                         buyorder.DealQuantity = dealQuantity;
                         buyorder.SellID = sell.TradeRequestID;
                         buyorder.SellRequestPrice = sell.Price;
-                        buyorder.TradeType = Consts.BUY_CODE;
-                        buyorder.DealTime = DateTime.Now;
+                        buyorder.TradeType = Constants.BUY_CODE;
+                        buyorder.DealTime = DateTime.Now.ToString(Constants.DATEFORMAT_NUMONLY);
                         buyOrders.Add(buyorder);
                         buyReqs.Add(buy);
                         buy = GetHighestBuy(identifyID);
@@ -143,8 +144,8 @@ namespace BitCoinTradeFuncLib
                     sellorder.SellID = sell.TradeRequestID;
                     sellorder.SellRequestPrice = sell.Price;
                     sellorder.DealQuantity = totalQuantity;
-                    sellorder.TradeType = Consts.SELL_CODE;
-                    sellorder.DealTime = DateTime.Now;
+                    sellorder.TradeType = Constants.SELL_CODE;
+                    sellorder.DealTime = DateTime.Now.ToString(Constants.DATEFORMAT_NUMONLY);
                     sellOrders.Add(sellorder);
                 }
                 List<TradeOrder> orders = new List<TradeOrder>();

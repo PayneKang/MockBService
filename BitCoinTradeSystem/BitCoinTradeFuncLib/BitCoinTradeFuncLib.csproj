@@ -44,7 +44,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Consts.cs" />
     <Compile Include="KLineEngineer.cs" />
     <Compile Include="KLineType.cs" />
     <Compile Include="TradeEngineer.cs" />
@@ -55,6 +54,10 @@
     <ProjectReference Include="..\BitCoinTradeSystem.Models\BitCoinTradeSystem.Models.csproj">
       <Project>{737286FC-58D7-4B8D-9EC7-48B21A01C6A6}</Project>
       <Name>BitCoinTradeSystem.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CommonLib\CommonLib.csproj">
+      <Project>{83B6A32A-58DC-4F7A-8955-6C23DD71303B}</Project>
+      <Name>CommonLib</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
