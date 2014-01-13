@@ -74,12 +74,16 @@ namespace BitCoinTradeFuncLib
                 KLines = result
             };
         }
-        private KLineItem GetLatestKLine(DateTime beforeTime)
+        private KLineItem GetLatestKLine(DateTime beforeTime,int intervalMinutes = 5)
         {
-            return UrlReader.GetJsonResponse<KLineItem>(GET_LATESTKLINE_INTERFACE,SendType.Get, new ParameterValue[]{
+            return UrlReader.GetJsonResponse<KLineItem>(GET_LATESTKLINE_INTERFACE, SendType.Get, new ParameterValue[]{
                 new ParameterValue(){
                      Name = "beforeTime",
                      Value = beforeTime.ToString(Constants.DATEFORMAT_NUMONLY)
+                },
+                new ParameterValue(){
+                     Name = "intervalMinutes",
+                     Value = intervalMinutes.ToString()
                 }
             });
         }
@@ -137,10 +141,10 @@ namespace BitCoinTradeFuncLib
                     continue;
                 }
                 result[i].Close = tempKline.Close;
-                result[i].High = tempKline.High;
+                result[i].High = tempKline.Close;
                 result[i].IntervalMinutes = tempKline.IntervalMinutes;
-                result[i].Low = tempKline.Low;
-                result[i].Open = tempKline.Open;
+                result[i].Low = tempKline.Close;
+                result[i].Open = tempKline.Close;
                 result[i].Volume = 0f;
                 tempKline = result[i];
             }

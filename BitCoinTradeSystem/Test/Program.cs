@@ -16,6 +16,7 @@ namespace Test
         static void Main(string[] args)
         {
             TestKLine();
+            //TestTrade();
         }
 
         static void TestKLine()
