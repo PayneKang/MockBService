@@ -5,6 +5,7 @@ using System.Text;
 using System.Net;
 using System.IO;
 using System.Web.Script.Serialization;
+using CommonLib;
 
 namespace BitCoinTradeFuncLib
 {
@@ -63,7 +64,10 @@ namespace BitCoinTradeFuncLib
         public static T GetJsonResponse<T>(string url, SendType sendType = SendType.Get, ParameterValue[] parameters = null )
         {
             JavaScriptSerializer serializer = new JavaScriptSerializer();
-            T req = serializer.Deserialize<T>(UrlReader.ReadUrl(url,sendType,BuilResponseString(parameters)));
+            string responseStr =  BuilResponseString(parameters);
+            Logger.Log(string.Format("Send response to Url {0}, Response string: {1}", url, responseStr));
+            string reqStr = UrlReader.ReadUrl(url, sendType, responseStr);
+            T req = serializer.Deserialize<T>(reqStr);
             return req;
         }
         private static string BuilResponseString(ParameterValue[] parameters)

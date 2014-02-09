@@ -16,6 +16,7 @@ namespace BitCoinTradeSystem.Models
         public float RemainQuantity { get; set; }
         public float Amount { get { return Price * Quantity; } }
         public string TradeRequestID { get; set; }
+        public string RequestTime { get; set; }
         public static List<TradeRequestItem> TestBuyList
         {
             get

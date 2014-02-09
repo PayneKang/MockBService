@@ -15,8 +15,8 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            TestKLine();
-            //TestTrade();
+            //TestKLine();
+            TestTrade();
         }
 
         static void TestKLine()
@@ -41,9 +41,10 @@ namespace Test
             while (true)
             {
                 string key = ran.GetRandomString(10);
-                Logger.Log("start engineer");
+                Logger.Log("start a calculate");
                 TradeOrderResponse orders = eng.Calculate(key);
                 eng.SendOrderToResponse(orders);
+                Console.WriteLine("Order count: " + orders.Orders.Count);
                 System.Threading.Thread.Sleep(TradeEngineer.ORDER_INTERVAL);
             }
         }

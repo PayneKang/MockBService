@@ -16,6 +16,11 @@ namespace BitCoinTradeSystem.Models
     }
     public partial class TradeOrder
     {
+        public TradeOrder()
+        {
+            SellID = "0";
+            BuyID = "0";
+        }
         public string TradeType { get; set; }
         public float DealPrice { get; set; }
         public float DealQuantity { get; set; }
@@ -26,5 +31,7 @@ namespace BitCoinTradeSystem.Models
         public float SellRequestPrice { get; set; }
         public float BuyRequestPrice { get; set; }
         public string DealTime { get; set; }
+        public string SellRequestTime { get; set; }
+        public string BuyRequestTime { get; set; }
     }
 }

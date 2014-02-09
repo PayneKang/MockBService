@@ -69,88 +69,52 @@ namespace BitCoinTradeFuncLib
             {
                 TradeRequestItem buy = GetHighestBuy(identifyID);
                 TradeRequestItem sell = GetLowestSell(identifyID);
-                if (buy.Price < sell.Price)
-                    return null;
-                List<TradeOrder> buyOrders = new List<TradeOrder>();
-                List<TradeOrder> sellOrders = new List<TradeOrder>();
-                List<TradeRequestItem> buyReqs = new List<TradeRequestItem>();
-                List<TradeRequestItem> sellReqs = new List<TradeRequestItem>();
-                if (buy.Quantity > sell.Quantity)
+
+                TradeOrderResponse response = new TradeOrderResponse();
+                response.IdentifyID = identifyID;
+                response.Orders = new List<TradeOrder>();
+                TradeOrder order = new TradeOrder();
+                if (sell != null)
                 {
-                    buyReqs.Add(buy);
-                    TradeOrder buyorder = new TradeOrder();
-                    float totalQuantity = 0f;
-                    while (buy.Quantity > 0)
-                    {
-                        if (sell == null)
-                            break;
-                        if (buy.Price < sell.Price)
-                            break;
-                        // 创建卖单
-                        TradeOrder sellorder = new TradeOrder();
-                        float dealQuantity = buy.Quantity > sell.Quantity ? sell.Quantity : buy.Quantity;
-                        totalQuantity += dealQuantity;
-                        buy.Quantity -= dealQuantity;
-                        sell.Quantity -= dealQuantity;
-                        sellorder.BuyID = buy.TradeRequestID;
-                        sellorder.BuyRequestPrice = buy.Price;
-                        //sellorder.DealAmount = dealQuantity * sell.Price;
-                        //sellorder.DealPrice = sell.Price;
-                        sellorder.DealQuantity = dealQuantity;
-                        sellorder.SellID = sell.TradeRequestID;
-                        sellorder.SellRequestPrice = sell.Price;
-                        sellorder.TradeType = Constants.SELL_CODE;
-                        sellorder.DealTime = DateTime.Now.ToString(Constants.DATEFORMAT_NUMONLY);
-                        sellOrders.Add(sellorder);
-                        sellReqs.Add(sell);
-                        sell = GetLowestSell(identifyID);
-                    }
-                    buyorder.BuyID = buy.TradeRequestID;
-                    buyorder.BuyRequestPrice = buy.Price;
-                    buyorder.DealQuantity = totalQuantity;
-                    buyorder.TradeType = Constants.BUY_CODE;
-                    buyorder.DealTime = DateTime.Now.ToString(Constants.DATEFORMAT_NUMONLY);
-                    buyOrders.Add(buyorder);
+                    order.SellID = sell.TradeRequestID;
+                    order.SellRequestPrice = sell.Price;
+                    order.SellRequestTime = sell.RequestTime;
                 }
-                else
+
+                if (buy != null)
                 {
-                    sellReqs.Add(sell);
-                    TradeOrder sellorder = new TradeOrder();
-                    float totalQuantity = 0f;
-                    while (sell.Quantity > 0)
-                    {
-                        if (buy == null)
-                            break;
-                        if (buy.Price < sell.Price)
-                            break;
-                        TradeOrder buyorder = new TradeOrder();
-                        float dealQuantity = buy.Quantity > sell.Quantity ? sell.Quantity : buy.Quantity;
-                        totalQuantity += dealQuantity;
-                        buy.Quantity -= dealQuantity;
-                        sell.Quantity -= dealQuantity;
-                        buyorder.BuyID = buy.TradeRequestID;
-                        buyorder.BuyRequestPrice = buy.Price;
-                        //sellorder.DealAmount = dealQuantity * sell.Price;
-                        //sellorder.DealPrice = sell.Price;
-                        buyorder.DealQuantity = dealQuantity;
-                        buyorder.SellID = sell.TradeRequestID;
-                        buyorder.SellRequestPrice = sell.Price;
-                        buyorder.TradeType = Constants.BUY_CODE;
-                        buyorder.DealTime = DateTime.Now.ToString(Constants.DATEFORMAT_NUMONLY);
-                        buyOrders.Add(buyorder);
-                        buyReqs.Add(buy);
-                        buy = GetHighestBuy(identifyID);
-                    }
-                    sellorder.SellID = sell.TradeRequestID;
-                    sellorder.SellRequestPrice = sell.Price;
-                    sellorder.DealQuantity = totalQuantity;
-                    sellorder.TradeType = Constants.SELL_CODE;
-                    sellorder.DealTime = DateTime.Now.ToString(Constants.DATEFORMAT_NUMONLY);
-                    sellOrders.Add(sellorder);
+                    order.BuyID = buy.TradeRequestID;
+                    order.BuyRequestPrice = buy.Price;
+                    order.BuyRequestTime = buy.RequestTime;
+                }
+                order.DealQuantity = 0;
+                order.DealPrice = 0;
+                order.DealAmount = 0;
+                order.DealTime = DateTime.Now.ToString(Constants.DATEFORMAT_NUMONLY);
+                order.TradeType = Constants.SELL_CODE;
+                if (buy == null)
+                {
+                    response.Orders.Add(order);
+                    return response;
+                }
+                if (sell == null)
+                {
+                    response.Orders.Add(order);
+                    return response;
+                }
+                if (buy.Price < sell.Price)
+                {
+                    response.Orders.Add(order);
+                    return response;
                 }
                 List<TradeOrder> orders = new List<TradeOrder>();
-                orders.AddRange(sellOrders);
-                orders.AddRange(buyOrders);
+                List<TradeRequestItem> buyReqs = new List<TradeRequestItem>();
+                List<TradeRequestItem> sellReqs = new List<TradeRequestItem>();
+                buyReqs.Add(buy);
+                sellReqs.Add(sell);
+                float dealQuantity = buy.RemainQuantity > sell.RemainQuantity ? sell.RemainQuantity : buy.RemainQuantity;
+                order.DealQuantity = dealQuantity;
+                orders.Add(order);
                 return new TradeOrderResponse()
                 {
                     IdentifyID = identifyID,
